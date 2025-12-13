@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 美食百科
+ * 健康百科
  *
  * @author FanK
  */

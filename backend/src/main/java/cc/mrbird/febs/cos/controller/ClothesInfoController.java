@@ -24,7 +24,7 @@ public class ClothesInfoController {
     private final IClothesInfoService clothesInfoService;
 
     /**
-     * 分页查询美食百科信息
+     * 分页查询健康百科信息
      *
      * @param page
      * @param clothesInfo
@@ -41,7 +41,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 新增美食百科信息
+     * 新增健康百科信息
      *
      * @param clothesInfo
      * @return
@@ -53,7 +53,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 修改美食百科信息
+     * 修改健康百科信息
      *
      * @param clothesInfo
      * @return
@@ -64,7 +64,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 删除美食百科信息
+     * 删除健康百科信息
      *
      * @param ids
      * @return

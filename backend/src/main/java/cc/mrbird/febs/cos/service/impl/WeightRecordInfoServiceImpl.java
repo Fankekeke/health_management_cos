@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class WeightRecordInfoServiceImpl extends ServiceImpl<WeightRecordInfoMap
     @Override
     public LinkedHashMap<String, Object> queryHeatByUserToday(Integer userId) {
         // 获取用户今日饮食记录
-        List<DietRecordInfo> dietRecordInfoList = dietRecordInfoService.list(Wrappers.<DietRecordInfo>lambdaQuery().eq(DietRecordInfo::getUserId, userId));
+        List<DietRecordInfo> dietRecordInfoList = dietRecordInfoService.list(Wrappers.<DietRecordInfo>lambdaQuery().eq(DietRecordInfo::getUserId, userId).eq(DietRecordInfo::getCreateDate, LocalDate.now()));
 
         // 查询营养规则
         NutritionRuleInfo rule = nutritionRuleInfoService.getById(1);
