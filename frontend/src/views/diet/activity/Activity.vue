@@ -57,10 +57,49 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" @click="viewDetail(record)" title="查 看"></a-icon>
         </template>
       </a-table>
     </div>
+    <a-modal
+      title="指标详情"
+      :visible="detailVisible"
+      :footer="null"
+      @cancel="detailVisible = false"
+      width="600px"
+      :body-style="{ padding: '24px' }">
+      <div class="detail-container">
+        <a-descriptions bordered size="middle" :column="1" layout="horizontal">
+          <a-descriptions-item label="用户名称" class="detail-item">
+            <span class="detail-value">{{ detailData.userName }}</span>
+          </a-descriptions-item>
+          <a-descriptions-item label="记录日期" class="detail-item">
+            <span class="detail-value">{{ detailData.recordDate }}</span>
+          </a-descriptions-item>
+          <a-descriptions-item label="静息心率" class="detail-item">
+        <span class="detail-value health-value" :class="{ 'warning': detailData.restingHr > 100 }">
+          {{ detailData.restingHr !== null ? detailData.restingHr + ' 次/分钟' : '- -' }}
+        </span>
+          </a-descriptions-item>
+          <a-descriptions-item label="日间平均血氧饱和度" class="detail-item">
+        <span class="detail-value health-value" :class="{ 'normal': detailData.avgSpo2 >= 95, 'warning': detailData.avgSpo2 < 95 }">
+          {{ detailData.avgSpo2 !== null ? detailData.avgSpo2 + ' %' : '- -' }}
+        </span>
+          </a-descriptions-item>
+          <a-descriptions-item label="心率变异性分数" class="detail-item">
+        <span class="detail-value health-value" :class="{ 'normal': detailData.hrvScore >= 70, 'warning': detailData.hrvScore < 70 }">
+          {{ detailData.hrvScore !== null ? detailData.hrvScore : '- -' }}
+        </span>
+          </a-descriptions-item>
+          <a-descriptions-item label="建议" class="detail-item">
+            <div class="advice-content">{{ detailData.content || '- -' }}</div>
+          </a-descriptions-item>
+          <a-descriptions-item label="创建时间" class="detail-item">
+            <span class="detail-value">{{ detailData.createDate }}</span>
+          </a-descriptions-item>
+        </a-descriptions>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -75,6 +114,8 @@ export default {
   components: {RangeDate},
   data () {
     return {
+      detailVisible: false,
+      detailData: {},
       advanced: false,
       bulletinAdd: {
         visiable: false
@@ -186,6 +227,10 @@ export default {
             return '- -'
           }
         }
+      }, {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {customRender: 'operation'}
       }]
     }
   },
@@ -193,6 +238,10 @@ export default {
     this.fetch()
   },
   methods: {
+    viewDetail(record) {
+      this.detailData = record
+      this.detailVisible = true
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -325,5 +374,45 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.detail-container {
+  .detail-item {
+    padding: 12px 16px;
+
+    :deep(.ant-descriptions-item-label) {
+      background-color: #f8f9fa;
+      font-weight: 500;
+      color: #595959;
+      width: 150px;
+    }
+
+    :deep(.ant-descriptions-item-content) {
+      background-color: #fff;
+    }
+  }
+
+  .detail-value {
+    font-size: 14px;
+    color: #262626;
+
+    &.health-value {
+      font-weight: 500;
+
+      &.normal {
+        color: #52c41a;
+      }
+
+      &.warning {
+        color: #fa8c16;
+      }
+    }
+  }
+
+  .advice-content {
+    color: #595959;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    padding: 8px 0;
+  }
+}
 @import "../../../../static/less/Common";
 </style>

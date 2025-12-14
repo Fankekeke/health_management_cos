@@ -290,7 +290,7 @@ export default {
       postEdit: {
         visiable: false
       },
-      homeImage: ['SA1679123854527.jpg'],
+      homeImage: ['SA1765625187477.jpg'],
       bulletinList: [],
       orderView: {
         visiable: false,

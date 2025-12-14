@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.SleepRecordsMapper">
+
+    <!-- 分页查询用户夜间睡眠 -->
+    <select id="querySleepRecordPage" resultType="java.util.LinkedHashMap">
+        select
+        sr.id,
+        sr.user_id,
+        sr.record_date,
+        sr.start_time,
+        sr.end_time,
+        sr.duration_min,
+        sr.deep_min,
+        sr.light_min,
+        sr.rem_min,
+        sr.wake_count,
+        sr.avg_sleep_spo2,
+        sr.content,
+        sr.create_date,
+        ui.name as userName,
+        ui.code as userCode,
+        ui.images as userImages
+        from
+        sleep_records sr
+        left join user_info ui on (ui.id = sr.user_id)
+        where 1 = 1
+        <if test="sleepRecords.userName != null and sleepRecords.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{sleepRecords.userName},'%')
+        </if>
+        <if test="sleepRecords.userId != null and sleepRecords.userId != ''">
+            AND ui.user_id = #{sleepRecords.userId}
+        </if>
+        order by sr.create_date desc
+
+    </select>
+</mapper>

@@ -56,10 +56,71 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="eye" theme="twoTone" twoToneColor="#4a9ff5" @click="viewDetail(record)" title="查 看" style="margin-right: 8px;"></a-icon>
         </template>
       </a-table>
     </div>
+    <a-modal
+      title="睡眠详情"
+      :visible="detailVisible"
+      :footer="null"
+      @cancel="detailVisible = false"
+      width="700px">
+      <div class="sleep-detail">
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-descriptions bordered size="small" :column="1">
+              <a-descriptions-item label="用户名称">{{ detailData.userName }}</a-descriptions-item>
+              <a-descriptions-item label="记录日期">{{ detailData.recordDate }}</a-descriptions-item>
+              <a-descriptions-item label="入睡时间">{{ detailData.startTime }}</a-descriptions-item>
+              <a-descriptions-item label="起床时间">{{ detailData.endTime }}</a-descriptions-item>
+              <a-descriptions-item label="总睡眠时长">
+                <span v-if="detailData.durationMin">{{ (detailData.durationMin / 60).toFixed(1) }} 小时 ({{ detailData.durationMin }} 分钟)</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="夜间清醒次数">
+                <span v-if="detailData.wakeCount !== null">{{ detailData.wakeCount }} 次</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="创建时间">{{ detailData.createDate }}</a-descriptions-item>
+            </a-descriptions>
+          </a-col>
+          <a-col :span="12">
+            <a-descriptions bordered size="small" :column="1">
+              <a-descriptions-item label="深度睡眠">
+                <span v-if="detailData.deepMin">{{ (detailData.deepMin / 60).toFixed(1) }} 小时 ({{ detailData.deepMin }} 分钟)</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="浅层睡眠">
+                <span v-if="detailData.lightMin">{{ (detailData.lightMin / 60).toFixed(1) }} 小时 ({{ detailData.lightMin }} 分钟)</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="REM睡眠">
+                <span v-if="detailData.remMin">{{ (detailData.remMin / 60).toFixed(1) }} 小时 ({{ detailData.remMin }} 分钟)</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="睡眠效率">
+                <span v-if="detailData.efficiency !== null">{{ detailData.efficiency }}%</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="睡眠期间平均血氧">
+                <span v-if="detailData.avgSleepSpo2 !== null">{{ detailData.avgSleepSpo2 }}%</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="最低血氧">
+                <span v-if="detailData.lowestSpo2 !== null">{{ detailData.lowestSpo2 }}%</span>
+                <span v-else>- -</span>
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-col>
+        </a-row>
+        <a-divider />
+        <div class="advice-section">
+          <h4>睡眠建议</h4>
+          <div>{{ detailData.content || '暂无建议' }}</div>
+        </div>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -74,6 +135,8 @@ export default {
   components: {RangeDate},
   data () {
     return {
+      detailVisible: false,
+      detailData: {},
       advanced: false,
       bulletinAdd: {
         visiable: false
@@ -196,6 +259,10 @@ export default {
             return '- -'
           }
         }
+      }, {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {customRender: 'operation'}
       }]
     }
   },
@@ -203,6 +270,18 @@ export default {
     this.fetch()
   },
   methods: {
+    viewDetail(record) {
+      this.detailData = {
+        ...record,
+        userName: record.userName || '- -',
+        recordDate: record.recordDate || '- -',
+        startTime: record.startTime || '- -',
+        endTime: record.endTime || '- -',
+        createDate: record.createDate || '- -',
+        content: record.content || '暂无建议'
+      };
+      this.detailVisible = true;
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -334,5 +413,24 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.sleep-detail {
+  .advice-section {
+    h4 {
+      color: #595959;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #262626;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  :deep(.ant-descriptions-item-label) {
+    background-color: #fafafa;
+    font-weight: 500;
+  }
+}
 @import "../../../../static/less/Common";
 </style>

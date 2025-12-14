@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.DailyActivityInfoMapper">
+
+    <!-- 分页查询生理指标 -->
+    <select id="queryDailyActivityPage" resultType="java.util.LinkedHashMap">
+        select
+        dai.id,
+        dai.user_id,
+        dai.record_date,
+        dai.resting_hr,
+        dai.avg_spo2,
+        dai.hrv_score,
+        dai.content,
+        dai.create_date,
+        ui.name as userName,
+        ui.code as userCode,
+        ui.images as userImages
+        from
+        daily_activity_info dai
+        left join user_info ui on (ui.id = dai.user_id)
+        where 1 = 1
+        <if test="dailyActivityInfo.userName != null and dailyActivityInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{dailyActivityInfo.userName},'%')
+        </if>
+        <if test="dailyActivityInfo.userId != null and dailyActivityInfo.userId != ''">
+            AND ui.user_id = #{dailyActivityInfo.userId}
+        </if>
+        order by dai.create_date desc
+
+    </select>
+</mapper>
